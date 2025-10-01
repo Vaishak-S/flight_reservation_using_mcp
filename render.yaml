@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: flight-backend
+    env: python
+    plan: free
+    repo: <YOUR_GITHUB_REPO_URL>
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+        value: <YOUR_OPENAI_API_KEY>
+      - key: DATABASE_URL
+        sync: false
+        value: <YOUR_POSTGRES_URL>
+    autoDeploy: true
+    rootDir: /
+
+  - type: web
+    name: flight-frontend
+    env: python
+    plan: free
+    repo: <YOUR_GITHUB_REPO_URL>
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run frontend/streamlit_app.py --server.port $PORT --server.headless true
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+        value: <YOUR_OPENAI_API_KEY>
+      - key: BACKEND_URL
+        sync: false
+        value: https://flight-backend.onrender.com/flight-reservation
+    autoDeploy: true
+    rootDir: /
